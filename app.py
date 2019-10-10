@@ -1,0 +1,217 @@
+from flask import Flask, request, jsonify
+from flask.logging import create_logger
+import logging
+
+import pandas as pd
+
+
+import numpy as np
+import torch.nn as nn
+import torch
+
+import json
+    
+from string import punctuation
+
+def tokenize_review(test_review):
+    test_review = test_review.lower() # lowercase
+    # get rid of punctuation
+    test_text = ''.join([c for c in test_review if c not in punctuation])
+
+    # splitting by spaces
+    test_words = test_text.split()
+
+    # tokens
+    test_ints = []
+    test_ints.append([vocab_to_int[word] for word in test_words])
+
+    return test_ints
+
+def pad_features(reviews_ints, seq_length):
+    ''' Return features of review_ints, where each review is padded with 0's 
+        or truncated to the input seq_length.
+    '''
+    
+    # getting the correct rows x cols shape
+    features = np.zeros((len(reviews_ints), seq_length), dtype=int)
+
+    # for each review, I grab that review and 
+    for i, row in enumerate(reviews_ints):
+        features[i, -len(row):] = np.array(row)[:seq_length]
+    
+    return features
+
+class SentimentRNN(nn.Module):
+    """
+    The RNN model that will be used to perform Sentiment analysis.
+    """
+
+    def __init__(self, vocab_size, output_size, embedding_dim, hidden_dim, n_layers, drop_prob=0.5):
+        """
+        Initialize the model by setting up the layers.
+        """
+        super(SentimentRNN, self).__init__()
+
+        self.output_size = output_size
+        self.n_layers = n_layers
+        self.hidden_dim = hidden_dim
+        
+        # embedding and LSTM layers
+        self.embedding = nn.Embedding(vocab_size, embedding_dim)
+        self.lstm = nn.LSTM(embedding_dim, hidden_dim, n_layers, 
+                            dropout=drop_prob, batch_first=True)
+        
+        # dropout layer
+        self.dropout = nn.Dropout(0.3)
+        
+        # linear and sigmoid layers
+        self.fc = nn.Linear(hidden_dim, output_size)
+        self.sig = nn.Sigmoid()
+        
+
+    def forward(self, x, hidden):
+        """
+        Perform a forward pass of our model on some input and hidden state.
+        """
+        batch_size = x.size(0)
+
+        # embeddings and lstm_out
+        embeds = self.embedding(x)
+        lstm_out, hidden = self.lstm(embeds, hidden)
+    
+        # stack up lstm outputs
+        lstm_out = lstm_out.contiguous().view(-1, self.hidden_dim)
+        
+        # dropout and fully-connected layer
+        out = self.dropout(lstm_out)
+        out = self.fc(out)
+        # sigmoid function
+        sig_out = self.sig(out)
+        
+        # reshape to be batch_size first
+        sig_out = sig_out.view(batch_size, -1)
+        sig_out = sig_out[:, -1] # get last batch of labels
+        
+        # return last sigmoid output and hidden state
+        return sig_out, hidden
+    
+    
+    def init_hidden(self, batch_size):
+        ''' Initializes hidden state '''
+        # Create two new tensors with sizes n_layers x batch_size x hidden_dim,
+        # initialized to zero, for hidden state and cell state of LSTM
+        weight = next(self.parameters()).data
+        
+        if (train_on_gpu):
+            hidden = (weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().cuda(),
+                  weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().cuda())
+        else:
+            hidden = (weight.new(self.n_layers, batch_size, self.hidden_dim).zero_(),
+                      weight.new(self.n_layers, batch_size, self.hidden_dim).zero_())
+        
+        return hidden
+        
+
+def sentiment_predict(net, test_review, sequence_length=200):
+    
+    net.eval()
+    
+    # tokenize review
+    test_ints = tokenize_review(test_review)
+    
+    # pad tokenized sequence
+    seq_length=sequence_length
+    features = pad_features(test_ints, seq_length)
+    
+    # convert to tensor to pass into your model
+    feature_tensor = torch.from_numpy(features)
+    
+    batch_size = feature_tensor.size(0)
+    
+    # initialize hidden state
+    h = net.init_hidden(batch_size)
+    
+    if(train_on_gpu):
+        feature_tensor = feature_tensor.cuda()
+    
+    # get the output from the model
+    output, h = net(feature_tensor.long(), h)
+    
+    # convert output probabilities to predicted class (0 or 1)
+    pred = torch.round(output.squeeze()) 
+    # printing output value, before rounding
+    print('Prediction value, pre-rounding: {:.6f}'.format(output.item()))
+    
+    # print custom response
+    if(pred.item()==1):
+        return "Positive review detected!"
+    else:
+        return "Negative review detected."
+
+
+app = Flask(__name__)
+LOG = create_logger(app)
+LOG.setLevel(logging.INFO)
+
+
+@app.route("/")
+def home():
+    html = f"<h3>Sentiment Prediction Home</h3>"
+    return html.format(format)
+
+@app.route("/predict", methods=['POST'])
+def predict():
+    """Performs an sentiment prediction
+        
+        input looks like:
+        {
+        "CHAS":{
+        "0":0
+        }
+        }
+        
+        result looks like:
+        { "prediction": [ <val> ] }
+        
+        """
+    
+    # Logging the input payload
+    json_payload = request.json
+    LOG.info(f"JSON payload: \n{json_payload}")
+    inference_payload = pd.DataFrame(json_payload)
+    LOG.info(f"Inference payload DataFrame: \n{inference_payload}")
+    # get an output prediction from the pretrained model, clf
+    prediction = list(sentiment_predict(net, test_review_pos, seq_length))
+    # TO DO:  Log the output prediction value
+    return jsonify({'prediction': prediction})
+
+if __name__ == "__main__":
+    # load pretrained model as clf
+    train_on_gpu=torch.cuda.is_available()
+
+    with open('./model_data/data.json', 'r') as fp:
+        vocab_to_int = json.load(fp)
+			
+    # Instantiate the model w/ hyperparams
+    vocab_size = len(vocab_to_int)+1 # +1 for the 0 padding + our word tokens
+    output_size = 1
+    embedding_dim = 400
+    hidden_dim = 256
+    n_layers = 2
+
+    net = SentimentRNN(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
+
+    print(net)
+
+    net.load_state_dict(torch.load('./model_data/sentiment.dat'))
+			
+    # positive test review
+    test_review_pos = 'This movie had the best acting and the dialogue was so good. I loved it.'
+
+    # call function
+    seq_length=200 # good to use the length that was trained on
+
+    sentiment_predict(net, test_review_pos, seq_length)
+    app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
+
+        
