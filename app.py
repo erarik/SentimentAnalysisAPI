@@ -156,7 +156,7 @@ LOG.setLevel(logging.INFO)
 
 @app.route("/")
 def home():
-    html = f"<h3>Sentiment Prediction Home</h3>"
+    html = "<h3>Sentiment Prediction Home</h3>"
     return html.format(format)
 
 @app.route("/predict", methods=['POST'])
@@ -165,31 +165,37 @@ def predict():
         
         input looks like:
         {
-        "CHAS":{
-        "0":0
-        }
+        "message":"This movie had the best acting and the dialogue was so good. I loved it."
         }
         
         result looks like:
-        { "prediction": [ <val> ] }
+        {
+        "statusCode": "200",
+        "headers":{"Content-type":"application/json"},
+        "body":"{\"prediction\": \"Positive review detected!\"}
+        }
         
         """
     
-    # Logging the input payload
-    json_payload = request.json
-    LOG.info(f"JSON payload: \n{json_payload}")
-    inference_payload = pd.DataFrame(json_payload)
-    LOG.info(f"Inference payload DataFrame: \n{inference_payload}")
+    # Logging the input
+    json_request = request.json
+    LOG.info("JSON : \n"+json.dumps(json_request))
     # get an output prediction from the pretrained model, clf
-    prediction = list(sentiment_predict(net, test_review_pos, seq_length))
+    prediction = sentiment_predict(net, json_request['message'])
     # TO DO:  Log the output prediction value
-    return jsonify({'prediction': prediction})
+    response = {
+        "statusCode": "200",
+        "headers":{"Content-type":"application/json"},
+        "body":"{\"prediction\":\"" + prediction + "\"]"
+        }
+    LOG.info("JSON Response : \n"+json.dumps(response))
+    return response
 
 if __name__ == "__main__":
     # load pretrained model as clf
     train_on_gpu=torch.cuda.is_available()
 
-    with open('./model_data/data.json', 'r') as fp:
+    with open('./model_data/vocab.json', 'r') as fp:
         vocab_to_int = json.load(fp)
 			
     # Instantiate the model w/ hyperparams
@@ -203,7 +209,7 @@ if __name__ == "__main__":
 
     print(net)
 
-    net.load_state_dict(torch.load('./model_data/sentiment.dat'))
+    net.load_state_dict(torch.load('./model_data/model.dat'))
 			
     # positive test review
     test_review_pos = 'This movie had the best acting and the dialogue was so good. I loved it.'
@@ -212,6 +218,4 @@ if __name__ == "__main__":
     seq_length=200 # good to use the length that was trained on
 
     sentiment_predict(net, test_review_pos, seq_length)
-    app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
-
-        
+    app.run(host='0.0.0.0', port=8080, debug=True) # specify port=80
