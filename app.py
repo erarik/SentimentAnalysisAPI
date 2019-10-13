@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from flask.logging import create_logger
 import logging
 
-import pandas as pd
-
 
 import numpy as np
 import torch.nn as nn
@@ -140,7 +138,7 @@ def sentiment_predict(net, test_review, sequence_length=200):
     # convert output probabilities to predicted class (0 or 1)
     pred = torch.round(output.squeeze()) 
     # printing output value, before rounding
-    print('Prediction value, pre-rounding: {:.6f}'.format(output.item()))
+    LOG.info('Prediction value, pre-rounding: {:.6f}'.format(output.item()))
     
     # print custom response
     if(pred.item()==1):
@@ -206,16 +204,9 @@ if __name__ == "__main__":
     n_layers = 2
 
     net = SentimentRNN(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
-
-    print(net)
-
     net.load_state_dict(torch.load('./model_data/model.dat'))
-			
-    # positive test review
-    test_review_pos = 'This movie had the best acting and the dialogue was so good. I loved it.'
 
     # call function
     seq_length=200 # good to use the length that was trained on
 
-    sentiment_predict(net, test_review_pos, seq_length)
-    app.run(host='0.0.0.0', port=8080, debug=True) # specify port=80
+    app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
