@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentimentanalysis
+spec:
+  selector:
+    matchLabels:
+      run: sentimentanalysis
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: sentimentanalysis
+    spec:
+      containers:
+      - name: sentimentanalysis
+        image: erarik/sentimentanalysis:latest
+        ports:
+        - containerPort: 80
