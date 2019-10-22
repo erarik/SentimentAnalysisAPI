@@ -1,10 +1,6 @@
 node {
     def app
     
-    dir("/home") {
-        sh "pwd"
-    }
-    
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
 
@@ -14,8 +10,7 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-
-        app = docker.build("earik/sentimentanalysis", "/home")
+        sh 'docker build -t earik/sentimentanalysis .'
     }
 
     stage('Test image') {
