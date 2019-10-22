@@ -1,15 +1,6 @@
 node {
     def app
 
-    stage('Initialize'){
-        def dockerHome = tool 'myDocker'
-        env.PATH = "${dockerHome}/bin:${env.PATH}"
-    }
-    
-    stage ('install docker client'){
-        sh "curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-17.04.0-ce.tgz && tar xzvf docker-17.04.0-ce.tgz"
-    }
-    
     stage ('Docker') {
         steps {
             sh 'docker/docker version'
