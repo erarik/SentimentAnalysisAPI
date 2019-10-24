@@ -40,3 +40,10 @@ You can find a detailed [project rubric, here](https://review.udacity.com/#!/rub
 * Setup and Configure Kubernetes locally
 * Create Flask app in Container
 * Run via kubectl
+
+### External links
+https://kubernetes.io/fr/docs/reference/kubectl/cheatsheet/
+https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-10-08/amazon-eks-vpc-sample.yaml
+https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html
+
+
