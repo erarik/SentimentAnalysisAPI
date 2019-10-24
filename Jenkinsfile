@@ -10,7 +10,7 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("earik/sentimentanalysis")
+        app = docker.build("erarik/sentimentanalysis")
     }
     
     stage('Push image') {
