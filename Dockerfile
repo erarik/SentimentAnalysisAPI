@@ -15,7 +15,7 @@ COPY . app.py /app/
 RUN pip install --upgrade pip &&\
     pip install --trusted-host pypi.python.org -r requirements.txt
 
-RUN pip3 install http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl
+RUN pip3 install https://files.pythonhosted.org/packages/b4/0b/9d33aef363b6728ad937643d98be713c6c25d50ce338678ad57cee6e6fd5/torch-1.3.0-cp37-cp37m-manylinux1_x86_64.whl
 RUN pip3 install pytorch
 
 ## Step 4:
