@@ -5,13 +5,21 @@ node {
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
     }
-
+    
+    stage('Apply Kubernetes files') {
+        withKubeConfig([credentialsId: 'user1', serverUrl: 'https://api.k8s.my-company.com']) {
+                sh 'kubectl apply -f kubectl_deploy.yaml'
+        }
+    }
+    
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
         app = docker.build("erarik/sentimentanalysis")
     }
+    
+
     
     stage('Push image') {
         /* Finally, we'll push the image with two tags:
