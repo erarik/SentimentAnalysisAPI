@@ -15,6 +15,9 @@ COPY . app.py /app/
 RUN pip install --upgrade pip &&\
     pip install --trusted-host pypi.python.org -r requirements.txt
 
+RUN pip3 install http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl
+RUN pip3 install pytorch
+
 ## Step 4:
 # Expose port 80
 EXPOSE 80
