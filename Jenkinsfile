@@ -1,6 +1,12 @@
 node {
     def app
     
+    withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
+        
+        sh "kubectl"
+    }
+    
+    
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
