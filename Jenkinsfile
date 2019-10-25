@@ -6,9 +6,12 @@ node {
         checkout scm
     }
     
-    stage('Apply Kubernetes files') {
-        withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
-                sh '/home/ubuntu/bin/kubectl/kubectl apply -f kubectl_deploy.yaml'
+    withEnv(['PATH+KUBECTL=/home/ubuntu/bin/kubectl']) {
+    
+        stage('Apply Kubernetes files') {
+            withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
+                sh 'kubectl apply -f kubectl_deploy.yaml'
+            }
         }
     }
     
