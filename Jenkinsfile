@@ -6,13 +6,13 @@ node {
         checkout scm
     }
     
-    withEnv(["PATH=/home/ubuntu/bin/kubectl:${env.PATH}"]) { 
-        stage('Apply Kubernetes files') {
-            withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
-                sh 'kubectl apply -f kubectl_deploy.yaml'
-            }
+    
+    stage('Apply Kubernetes files') {
+        withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
+            sh 'kubectl apply -f kubectl_deploy.yaml'
         }
     }
+    
     
     stage('Build image') {
         /* This builds the actual image; synonymous to
