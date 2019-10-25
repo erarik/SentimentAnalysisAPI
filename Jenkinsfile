@@ -1,24 +1,18 @@
 node {
-    def app
-    
-    withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
-        
-        sh "kubectl"
-    }
-    
+    def app    
     
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
     }
     
-    
-    stage('Apply Kubernetes files') {
-        withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
-            sh 'kubectl apply -f kubectl_deploy.yaml'
+    withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
+        stage('Apply Kubernetes files') {
+            withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
+                sh 'kubectl apply -f kubectl_deploy.yaml'
+            }
         }
     }
-    
     
     stage('Build image') {
         /* This builds the actual image; synonymous to
@@ -26,8 +20,6 @@ node {
 
         app = docker.build("erarik/sentimentanalysis")
     }
-    
-
     
     stage('Push image') {
         /* Finally, we'll push the image with two tags:
