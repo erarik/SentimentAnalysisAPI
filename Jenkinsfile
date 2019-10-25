@@ -8,7 +8,7 @@ node {
     
     stage('Apply Kubernetes files') {
         withKubeConfig([credentialsId: 'awsjenkins', serverUrl: 'https://api.k8s.my-company.com']) {
-                sh 'kubectl apply -f kubectl_deploy.yaml'
+                sh '/home/ubuntu/bin/kubectl/kubectl apply -f kubectl_deploy.yaml'
         }
     }
     
