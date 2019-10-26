@@ -12,7 +12,6 @@ node {
                 withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
                     sh 'aws eks --region us-west-2 update-kubeconfig --name ekscluster2'
                     sh 'aws s3 ls'
-                    sh 'kubectl get pods'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
                 }
             }
