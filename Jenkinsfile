@@ -10,7 +10,7 @@ node {
         stage('Apply Kubernetes files') {
                 withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
                     sh 'aws s3 ls'
-                    sh 'kubectl get svc'
+                    sh 'kubectl get svc --v=10'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
                 }
             
