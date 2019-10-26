@@ -6,18 +6,6 @@ node {
         checkout scm
     }
     
-    withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
-        stage('Apply Kubernetes files') {
-                withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
-                    sh 'aws s3 ls'
-                    sh 'aws eks --region us-west-2 update-kubeconfig --name ekscluster3'
-                    sh 'kubectl get svc --v=10'
-                    sh 'kubectl apply -f kubectl_deploy.yaml'
-                }
-            
-        }
-    }
-    
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
@@ -33,6 +21,18 @@ node {
         docker.withRegistry('https://registry.hub.docker.com', 'docker-Hub-credentials') {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
+        }
+    }
+    
+    withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
+        stage('Apply Kubernetes files') {
+                withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
+                    sh 'aws s3 ls'
+                    sh 'kubectl apply -f kubectl_deploy.yaml'
+                    sh 'kubectl get deployments'
+                    sh 'kubectl apply -f kubectl_service.yaml'
+                }
+            
         }
     }
 }
