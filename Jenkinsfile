@@ -8,12 +8,13 @@ node {
     
     withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
         stage('Apply Kubernetes files') {
+            withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubeconfig', namespace: '', serverUrl: '') {
                 withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
                     sh 'aws s3 ls'
                     sh 'kubectl get svc --v=10'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
                 }
-            
+            }
         }
     }
     
