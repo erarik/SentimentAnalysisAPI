@@ -21,6 +21,8 @@ RUN pip3 install -vvv --no-cache-dir https://files.pythonhosted.org/packages/b4/
 # Expose port 80
 EXPOSE 80
 
+RUN wget https://sentimentanalysismodel.s3-us-west-2.amazonaws.com/model.dat
+
 ## Step 5:
 # Run app.py at container launch
 CMD ["python3","app.py"]
