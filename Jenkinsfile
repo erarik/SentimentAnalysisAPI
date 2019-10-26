@@ -9,7 +9,9 @@ node {
     withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
         stage('Apply Kubernetes files') {
             withKubeConfig([credentialsId: 'kubeconfig']) {
-                sh 'kubectl apply -f kubectl_deploy.yaml'
+                withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
+                    sh 'kubectl apply -f kubectl_deploy.yaml'
+                }
             }
         }
     }
