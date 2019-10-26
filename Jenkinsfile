@@ -10,6 +10,7 @@ node {
         stage('Apply Kubernetes files') {
             withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubeconfig', namespace: '', serverUrl: '') {
                 withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
+                    sh 'aws eks --region us-west-2 update-kubeconfig --name arn:aws:eks:us-west-2:307015418607:cluster/ekscluster'
                     sh 'aws s3 ls'
                     sh 'kubectl get pods'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
