@@ -10,6 +10,8 @@ node {
         stage('Apply Kubernetes files') {
             withKubeConfig([credentialsId: 'kubeconfig']) {
                 withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
+                    sh 'aws s3 ls'
+                    sh 'kubectl get pods'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
                 }
             }
