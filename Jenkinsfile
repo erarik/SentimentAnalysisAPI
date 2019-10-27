@@ -23,16 +23,18 @@ node {
     }
 
     stage('Update deploy yaml file') {
-        sh '''
-            sed 's/BUILD_NUMBER/%BUILD_NUMBER%/g' kubectl_deploy.yaml > kubectl_deploy2.yaml
-        '''
+        newbuild = "${BUILD_NUMBER}"
+        oldbuild = "BUILD_NUMBER"
+        sh """
+            sed -i -e 's#${oldbuild}#${newbuild}#' ./kubectl_deploy.yaml
+        """
     }    
     
     withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
         stage('Apply Kubernetes files') {
              withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
                     sh 'kubectl apply -f aws-auth-cm.yaml'
-                    sh 'kubectl apply -f kubectl_deploy2.yaml'
+                    sh 'kubectl apply -f kubectl_deploy.yaml'
                     sh 'kubectl get deployments'
                     sh 'kubectl apply -f kubectl_service.yaml'
                     sh 'kubectl get services'
