@@ -109,7 +109,7 @@ class SentimentRNN(nn.Module):
         
         return hidden
         
-# pylint: disable=E1101
+
 def sentiment_predict(net, test_review, sequence_length=200):
     
     net.eval()
@@ -118,8 +118,7 @@ def sentiment_predict(net, test_review, sequence_length=200):
     test_ints = tokenize_review(test_review)
     
     # pad tokenized sequence
-    seq_length=sequence_length
-    features = pad_features(test_ints, seq_length)
+    features = pad_features(test_ints, sequence_length)
     
     # convert to tensor to pass into your model
     feature_tensor = torch.from_numpy(features)
@@ -206,7 +205,6 @@ if __name__ == "__main__":
     net = SentimentRNN(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
     net.load_state_dict(torch.load('./model_data/model.dat'))
 
-    # call function
-    seq_length=200 # good to use the length that was trained on
-
     app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
+
+# pylint: disable=E1101,W0621
