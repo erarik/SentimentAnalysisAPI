@@ -203,7 +203,7 @@ if __name__ == "__main__":
     n_layers = 2
 
     net = SentimentRNN(vocab_size, output_size, embedding_dim, hidden_dim, n_layers)
-    net.load_state_dict(torch.load('./model_data/model.dat'))
+    net.load_state_dict(torch.load('./model.dat'))
 
     app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
 
