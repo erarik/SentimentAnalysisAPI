@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: sentimentanalysis
-        image: erarik/sentimentanalysis:$(BUILD_NUMBER)
+        image: erarik/sentimentanalysis:latest
         ports:
         - containerPort: 80
