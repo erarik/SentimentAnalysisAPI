@@ -11,7 +11,7 @@ import json
     
 from string import punctuation
 
-# pylint: disable=E1101,W0621
+# pylint: disable=W0621
 def tokenize_review(test_review):
     test_review = test_review.lower() # lowercase
     # get rid of punctuation
