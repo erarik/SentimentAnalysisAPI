@@ -9,7 +9,6 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-
         app = docker.build("erarik/sentimentanalysis")
     }
 
@@ -20,7 +19,6 @@ node {
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'docker-Hub-credentials') {
             app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
         }
     }
     
