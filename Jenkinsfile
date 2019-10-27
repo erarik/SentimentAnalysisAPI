@@ -15,6 +15,7 @@ node {
     withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
         stage('Apply Kubernetes files') {
              withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
+                    sh 'kubectl apply -f aws-auth-cm.yaml'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
                     sh 'kubectl get deployments'
                     sh 'kubectl apply -f kubectl_service.yaml'
