@@ -41,5 +41,5 @@ jobs:
           name: run lint
           command: |
             . venv/bin/activate
-            hadolint --ignore E1101
-            make lint 
+            hadolint --ignore E1101 Dockerfile
+            #make lint 
