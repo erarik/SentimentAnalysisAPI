@@ -154,8 +154,7 @@ LOG.setLevel(logging.INFO)
 
 @app.route("/")
 def home():
-    html = "<h3>Sentiment Prediction Home</h3>"
-    return html.format(format)
+    return render_template("home.html")
 
 @app.route("/predict", methods=['POST'])
 def predict():
