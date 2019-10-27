@@ -24,7 +24,7 @@ node {
 
     stage('Update deploy yaml file') {
         sh '''
-            sed 's/BUILD_NUMBER/${env.BUILD_NUMBER}/g' kubectl_deploy.yaml > kubectl_deploy2.yaml
+            sed 's/BUILD_NUMBER/%BUILD_NUMBER%/g' kubectl_deploy.yaml > kubectl_deploy2.yaml
         '''
     }    
     
