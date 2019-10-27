@@ -109,7 +109,7 @@ class SentimentRNN(nn.Module):
         
         return hidden
         
-
+# pylint: disable=E1101
 def sentiment_predict(net, test_review, sequence_length=200):
     
     net.eval()
