@@ -15,14 +15,12 @@ node {
     withEnv(["PATH+KUBECTL=/home/ubuntu/bin"]) {
         stage('Apply Kubernetes files') {
              withAWS(credentials: 'awsjenkins', region: 'us-west-2') {
-                    sh 'aws eks --region us-west-2 update-kubeconfig --name ekscluster'
-                    sh 'kubectl get events'
                     sh 'kubectl apply -f kubectl_deploy.yaml'
                     sh 'kubectl get deployments'
                     sh 'kubectl apply -f kubectl_service.yaml'
                     sh 'kubectl get services'
                     sh 'kubectl get pods'
-                    
+                    sh 'kubectl get events'
              }   
         }
     }
