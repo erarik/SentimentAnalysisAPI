@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 from flask.logging import create_logger
 import logging
 
@@ -67,7 +67,7 @@ class SentimentRNN(nn.Module):
         self.fc = nn.Linear(hidden_dim, output_size)
         self.sig = nn.Sigmoid()
         
-
+    # pylint: disable=W0221
     def forward(self, x, hidden):
         """
         Perform a forward pass of our model on some input and hidden state.
@@ -110,7 +110,7 @@ class SentimentRNN(nn.Module):
         
         return hidden
         
-
+# pylint: disable=E1101
 def sentiment_predict(net, test_review, sequence_length=200):
     
     net.eval()
@@ -176,7 +176,7 @@ def predict():
     
     # Logging the input
     json_request = request.json
-    LOG.info("JSON : \n"+json.dumps(json_request))
+    LOG.info("JSON : \n{}".format(json.dumps(json_request)))
     # get an output prediction from the pretrained model, clf
     prediction = sentiment_predict(net, json_request['message'])
     # TO DO:  Log the output prediction value
@@ -185,7 +185,7 @@ def predict():
         "headers":{"Content-type":"application/json"},
         "body":"{\"prediction\":\"" + prediction + "\"]"
         }
-    LOG.info("JSON Response : \n"+json.dumps(response))
+    LOG.info("JSON Response : \n{}".format(json.dumps(response)))
     return response
 
 if __name__ == "__main__":
