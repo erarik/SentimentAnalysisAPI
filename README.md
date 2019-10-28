@@ -18,5 +18,5 @@ The model is based on a pre-trained, `sklearn` model that has been trained to pr
 * Deploy the image to AWS EKS
 
 ### Useful External links
-https://kubernetes.io/fr/docs/reference/kubectl/cheatsheet/
-https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-10-08/amazon-eks-vpc-sample.yaml
+* https://kubernetes.io/fr/docs/reference/kubectl/cheatsheet/
+* https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-10-08/amazon-eks-vpc-sample.yaml
