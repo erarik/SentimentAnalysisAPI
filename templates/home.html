@@ -5,21 +5,21 @@
 <title>Udacity project Sentiment prediction on movie comment</title>
 </head>
 <body>
-	<h1>Udacity project Sentiment prediction on movie comment - Ertugrul ARIK</h1>
+<h1>Udacity project Sentiment prediction on movie comment - Ertugrul ARIK</h1>
+
 <form id="form" action="" method="post">
-Comment: <input type="text" name="comment"><br>
+Enter a commment on a movie: <br>
+<textarea id="comment" cols="40" rows="5"></textarea>
 <input id="submit" type="button" name="submit" value="submit">
 </form>
+<br>
 
-<div class="col-xs-12">
-        <textarea class="form-control" readonly id="dataSent">here: data sent...</textarea>
-        <br>
-      </div>
-      <div class="control-label col-xs-12">
-        <label>Result:</label>
-      </div>
-      <div class="col-xs-12">
-        <textarea class="form-control" readonly id="results">Waiting to send request</textarea>
+<div  id="res">
+<label>Request to API:</label><br>
+<textarea class="form-control" readonly id="dataSent" cols="40" rows="5">here: data sent...</textarea>
+<br/>
+<label>Result from API:</label><br>
+<textarea class="form-control" readonly id="results" cols="40" rows="5">Waiting to send request</textarea>
 </div>
 
 
@@ -27,33 +27,36 @@ Comment: <input type="text" name="comment"><br>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
+		$("#res").hide();
         // click on button submit
         $("#submit").on('click', function(){
 		
-		
-			var formData = {
-				"message": $('input[name=comment]').val(),
-			};
-
+		$("#res").show();
 		
 		
-            // send ajax
-            $.ajax({
-                url: '/predict', // url where to submit the request
-                type : "POST", // type of action POST || GET
-                dataType : 'json', // data type
-                data : $("#form").serialize(), // post data || get data
-				//JSON.stringify(formData),
-                success : function(result) {
-                    // you can see the result from the console
-                    // tab of the developer tools
-                    console.log(result);
-					$('#target').html(result);
-                },
-                error: function(xhr, resp, text) {
-                    console.log(xhr, resp, text);
-                }
-            })
+	    var formData = {
+			"message": $('textarea#comment').val(),
+	    };
+		var rdata = JSON.stringify(formData)
+		console.log(rdata);
+		$('#dataSent').html(JSON.stringify(formData));
+		// send ajax
+		$.ajax({
+			url: '/predict', // url where to submit the request
+			type : "POST", // type of action POST || GET
+			dataType : 'json', // data type
+			data : rdata,
+			success : function(result) {
+				// you can see the result from the console
+				// tab of the developer tools
+				console.log(result);
+				$('#results').html(result);
+			},
+			error: function(xhr, resp, text) {
+				$('#results').html(text);
+				console.log(xhr, resp, text);
+			}
+		})
         });
     });
 
