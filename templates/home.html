@@ -45,6 +45,7 @@ Enter a commment on a movie: <br>
 			url: '/predict', // url where to submit the request
 			type : "POST", // type of action POST || GET
 			dataType : 'json', // data type
+			contentType: "application/json"
 			data : rdata,
 			success : function(result) {
 				// you can see the result from the console
