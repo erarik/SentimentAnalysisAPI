@@ -51,7 +51,7 @@ Enter a commment on a movie: <br>
 				// you can see the result from the console
 				// tab of the developer tools
 				console.log(result);
-				$('#results').html(result);
+				$('#results').html(result.body);
 			},
 			error: function(xhr, resp, text) {
 				$('#results').html(text);
