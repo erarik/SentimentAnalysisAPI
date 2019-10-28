@@ -176,7 +176,7 @@ def predict():
     
     # Logging the input
     json_request = request.json
-    LOG.info("JSON : \n{}".format(json.dumps(json_request)))
+    LOG.info("JSON : \n%s", json.dumps(json_request))
     # get an output prediction from the pretrained model, clf
     prediction = sentiment_predict(net, json_request['message'])
     # TO DO:  Log the output prediction value
@@ -185,7 +185,7 @@ def predict():
         "headers":{"Content-type":"application/json"},
         "body":"{\"prediction\":\"" + prediction + "\"]"
         }
-    LOG.info("JSON Response : \n{}".format(json.dumps(response)))
+    LOG.info("JSON Response : \n%s", json.dumps(response))
     return response
 
 if __name__ == "__main__":
