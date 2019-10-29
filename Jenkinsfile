@@ -6,6 +6,13 @@ node {
         checkout scm
     }
     
+    stage("Linting dockerfile") {
+      sh '/home/ubuntu/.local/bin/hadolint Dockerfile'
+    }
+    stage("Linting app.py") {'
+      sh 'pylint --disable=R,C,W1203 app.py'
+    }
+    
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
