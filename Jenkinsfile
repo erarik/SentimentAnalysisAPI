@@ -10,6 +10,9 @@ node {
       sh 'hadolint Dockerfile'
     }
     stage("Linting app.py") {
+      sh 'pip install --upgrade pip'
+	  sh 'pip install -r requirements.txt'
+	  sh 'pip install torch'
       sh 'pylint --disable=R,C,W1203 app.py'
     }
     
