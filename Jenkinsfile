@@ -9,7 +9,7 @@ node {
     stage("Linting dockerfile") {
       sh '/home/ubuntu/.local/bin/hadolint Dockerfile'
     }
-    stage("Linting app.py") {'
+    stage("Linting app.py") {
       sh 'pylint --disable=R,C,W1203 app.py'
     }
     
